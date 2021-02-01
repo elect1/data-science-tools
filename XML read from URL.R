@@ -14,8 +14,7 @@ URL_S   <- "https://forecast.weather.gov/MapClick.php?lat=36.02&lon=-115.16&unit
 URL_SW  <- "https://forecast.weather.gov/MapClick.php?lat=36.04&lon=-115.27&unit=0&lg=english&FcstType=dwml"
 URL_Ctr <- "https://forecast.weather.gov/MapClick.php?lat=36.18&lon=-115.15&unit=0&lg=english&FcstType=dwml"
 
-fileURL <- URL_West
-
+#fileURL <- URL_West
 #get_Temp(fileURL)
 
 x <- as.list(c(URL_W,URL_NW,URL_N,URL_NE,URL_E,URL_SE,URL_S,URL_SW,URL_Ctr))
@@ -27,7 +26,7 @@ get_Temp <- function(fileURL) {
   conn <- url(fileURL, "r")  # open connection to web page
   on.exit(close(conn))       # close connection upon exit
   
-  xData <- readLines(conn)
+  xData <- readLines(conn,warn=FALSE)
   xmlData <- xmlParse(xData)
   
   maxTempForecasts <- xmlValue(getNodeSet(xmlData, "//data[@type='forecast']/parameters/temperature[@type='maximum']/value"))
