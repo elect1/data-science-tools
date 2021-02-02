@@ -3,7 +3,7 @@
 rm(list = ls())  # clear prior environment
 
 setwd("C:/Users/Patrick/Git/data-science-tools")
-source("get_TEMP.R")
+source("get_Temp.R")  # load Temp function parsing the URL
 
 library(XML)
 
