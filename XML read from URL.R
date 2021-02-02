@@ -2,10 +2,16 @@
 
 rm(list = ls())  # clear prior environment
 
-setwd("C:/Users/Patrick/Git/data-science-tools")
+#setwd("C:/Users/Patrick/Git/data-science-tools")
 source("get_Temp.R")  # load Temp function parsing the URL
 
 library(XML)
+library(rJava)
+library(xlsxjars)
+library(xlsx)
+
+cwd <- getwd()  # current working directory
+Excelfile <- paste(cwd,"/LV Data.xlsx",sep="")
 
 string_head <- "https://forecast.weather.gov/MapClick.php?lat="
 string_midd <- "&lon="
@@ -29,7 +35,18 @@ URLs <- as.list(URLs)
 #print( get_Temp(URLs$W) )
 
 y <- lapply(URLs,get_Temp)  # returns list of forecasts
-print( as.numeric(y) )
-print( str(y) )
+#print( as.numeric(y) )
+#print( str(y) )
 
+today <- "2/2/2021"
+tmp <- data.frame(today,y)
+row.names(tmp) <- "maxTemp"
+print( str(tmp) )
 
+# The following is unsucessful because "append = TRUE" refers to
+# the ability to add a new worksheet, not adding new data to an
+# existing worksheet.  According to Marc Schwarz on
+# https://stat.ethz.ch/pipermail/r-help/2016-January/435394.html, try
+# using the package XLConnect.  Unsuccessful attempt:
+# write.xlsx(tmp, Excelfile, 
+#            col.names = FALSE, row.names = FALSE, append = TRUE)
