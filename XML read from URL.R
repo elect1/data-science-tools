@@ -2,13 +2,11 @@
 
 rm(list = ls())  # clear prior environment
 
-#setwd("C:/Users/Patrick/Git/data-science-tools")
-source("get_Temp.R")  # load Temp function parsing the URL
+source("get_Temp.R")  # load Temp parsing function from URL
 
 library(XML)
 library(rJava)
-library(xlsxjars)
-library(xlsx)
+library(XLConnect)  # replaces (& incompatible with) package:xlsx
 
 cwd <- getwd()  # current working directory
 Excelfile <- paste(cwd,"/LV Data.xlsx",sep="")
@@ -30,23 +28,25 @@ for (i in seq_along(Longitudes)) {
 }
 
 names(URLs) <- PointNames
-URLs <- as.list(URLs)
-
-#print( get_Temp(URLs$W) )
+URLs <- as.list(URLs)  # create list of the URLs (for lapply looping)
 
 y <- lapply(URLs,get_Temp)  # returns list of forecasts
-#print( as.numeric(y) )
-#print( str(y) )
 
-today <- "2/2/2021"
-tmp <- data.frame(today,y)
-row.names(tmp) <- "maxTemp"
-print( str(tmp) )
+today <- "2/2/2021"  # dummy character date placeholder
+df <- data.frame(today,y)  # puts today and y into a data frame
+row.names(df) <- "maxTemp"
+print( str(df) )
 
-# The following is unsucessful because "append = TRUE" refers to
+# The following is unsuccessful because "append = TRUE" refers to
 # the ability to add a new worksheet, not adding new data to an
 # existing worksheet.  According to Marc Schwarz on
 # https://stat.ethz.ch/pipermail/r-help/2016-January/435394.html, try
 # using the package XLConnect.  Unsuccessful attempt:
-# write.xlsx(tmp, Excelfile, 
+# write.xlsx(df, Excelfile, 
 #            col.names = FALSE, row.names = FALSE, append = TRUE)
+
+wb <- loadWorkbook(Excelfile)  # load Excel workbook
+startRow <- nrow(readWorksheet(wb,sheet="maxTemp",header=FALSE))+1  # to append
+writeWorksheet(wb,df,sheet="maxTemp",startRow=startRow,startCol=1,header=FALSE)
+saveWorkbook(wb,Excelfile)
+
