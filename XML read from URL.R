@@ -1,4 +1,8 @@
-# Read XML file from URL
+# Read XML file from URL and append data to existing XLSX worksheet
+
+# Note: this version (using XLConnect) works in Rstudio, but
+#       does not work in RGui.  A recommended solution is to
+#       try package:openxlsx
 
 rm(list = ls())  # clear prior environment
 
@@ -49,4 +53,5 @@ wb <- loadWorkbook(Excelfile)  # load Excel workbook
 startRow <- nrow(readWorksheet(wb,sheet="maxTemp",header=FALSE))+1  # to append
 writeWorksheet(wb,df,sheet="maxTemp",startRow=startRow,startCol=1,header=FALSE)
 saveWorkbook(wb,Excelfile)
+xlcFreeMemory()  # attempts to solve Excel sharing violation
 
