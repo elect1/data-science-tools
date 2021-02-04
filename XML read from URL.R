@@ -37,10 +37,10 @@ y <- lapply(URLs,get_Temp)  # returns list of forecasts
 
 # Form data frame for XLSX writing
 
-tmp <- as.character(Sys.Date())              # returns "yyyy-mm-dd"
-tmp <- unlist(strsplit(tmp,"-",fixed=TRUE))  # returns character vector
-tmp <- as.character(as.integer(tmp))         # strip leading zeros
-today <- paste(tmp[2],"/",tmp[3],"/",tmp[1],sep="") # mm/dd/yyy
+tmp <- as.character(Sys.Date())                     # returns "yyyy-mm-dd"
+tmp <- unlist(strsplit(tmp,"-",fixed=TRUE))         # returns character vector
+tmp <- as.character(as.integer(tmp))                # strip leading zeros
+today <- paste(tmp[2],"/",tmp[3],"/",tmp[1],sep="") # returns "mm/dd/yyy"
 
 df <- data.frame(today,y)  # puts today and y into a data frame
 row.names(df) <- "maxTemp"
@@ -51,7 +51,10 @@ print( str(df) )
 wb <- loadWorkbook(Excelfile)
 tmp0 <-readWorkbook(wb,sheet="maxTemp",colNames=FALSE,skipEmptyRows=FALSE,skipEmptyCols=FALSE)
 startRow <- nrow(tmp0) + 1  # to append
+lastCol <- ncol(tmp0)
 writeData(wb,"maxTemp",df,startRow=startRow,colNames=FALSE)
+addStyle(wb,"maxTemp",createStyle(halign="center"),
+         rows=startRow,cols=1:ncol(df),stack=TRUE)
 flag <- saveWorkbook(wb,Excelfile,overwrite=TRUE,returnValue=TRUE)
 if (is.logical(flag)) {
     print( paste("Workbook ",Excelfile," successfully updated.",sep=""))
