@@ -37,7 +37,11 @@ y <- lapply(URLs,get_Temp)  # returns list of forecasts
 
 # Form data frame for XLSX writing
 
-today <- "2/3/2021"  # dummy character date placeholder
+tmp <- as.character(Sys.Date())              # returns "yyyy-mm-dd"
+tmp <- unlist(strsplit(tmp,"-",fixed=TRUE))  # returns character vector
+tmp <- as.character(as.integer(tmp))         # strip leading zeros
+today <- paste(tmp[2],"/",tmp[3],"/",tmp[1],sep="") # mm/dd/yyy
+
 df <- data.frame(today,y)  # puts today and y into a data frame
 row.names(df) <- "maxTemp"
 print( str(df) )
